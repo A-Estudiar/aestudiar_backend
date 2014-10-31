@@ -1,0 +1,67 @@
+Escuelas segun CABA:
+nombre_est, Nombre
+CUE_ANEXO -> ID
+tipo, Tipo (Pub/priv)
+nivtip, Nivel
+tipest, Tipo de establecimiento
+depfun, Departamento a cargo
+comunas, Comuna
+de????
+barrio, Barrio
+domicilio_principal
+domicilio_secundario
+areaprogra, Hospital asignado
+longitude
+latitude
+
+Escuelas segun Gob nac:
+jurisdiccion
+cue_anexo
+nombre
+sector
+estado
+domicilio
+cp
+telefono
+localidad
+departamento
+email
+ed_comun
+ed_especial
+ed_jov_adu
+ed_arte
+ed_hosp_dom
+ed_inter_bil
+ed_encierro
+ed_comun_jardin_mat
+ed_comun_jardin_inf
+ed_comun_primaria
+ed_comun_secundaria
+ed_comun_sec_tecnica
+ed_comun_no_univ
+ed_comun_no_univ_inet
+ed_arte_secundaria
+ed_arte_sup_no_univ
+ed_arte_cursos_talleres
+ed_esp_temprana
+ed_esp_jardin_inf
+ed_esp_primaria
+ed_esp_secundaria
+ed_esp_talleres
+ed_j_a_primaria
+ed_j_a_egb3
+ed_j_a_secundaria
+ed_j_a_alfabetizacion
+ed_j_a_form_prof
+ed_j_a_form_prof_inet
+ed_hosp_inicial
+ed_hosp_primaria
+ed_hosp_secundaria
+servicios_comp
+tipo_ubicacion
+lat
+lon
+
+
+Cruzados:
+Inversion en educacion
