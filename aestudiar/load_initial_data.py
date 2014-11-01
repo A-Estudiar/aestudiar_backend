@@ -8,7 +8,7 @@ def transf_int(s):
     return None
 
 def transf_bool(x):
-  if x == 'x':
+  if x == 'x' or x == 'X':
     return True
   else:
     return False

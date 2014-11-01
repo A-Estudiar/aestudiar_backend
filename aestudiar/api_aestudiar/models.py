@@ -47,3 +47,16 @@ class Escuela(models.Model):
   tipo_ubicacion = models.IntegerField(null=True)
   lat = models.DecimalField(max_digits=12, decimal_places=9, null=True)
   lon = models.DecimalField(max_digits=12, decimal_places=9, null=True)
+
+
+class Encuesta(models.Model):
+  escuela = models.ForeignKey('Escuela')
+  created = models.DateTimeField(auto_now_add=True)
+  infraestructura= models.IntegerField(null=True)
+  calidadeducativa= models.IntegerField(null=True)
+  cuota= models.DecimalField(max_digits=10, decimal_places=2, null=True)
+
+class Denuncia(models.Model):
+  escuela = models.ForeignKey('Escuela')
+  created = models.DateTimeField(auto_now_add=True)
+  texto = models.TextField()

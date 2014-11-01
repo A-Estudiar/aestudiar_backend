@@ -1,8 +1,8 @@
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseNotFound
 import json
 from decimal import Decimal 
 
-from api_aestudiar.models import Escuela
+from api_aestudiar.models import Escuela, Encuesta, Denuncia
 
 from api_aestudiar.utils import DecimalEncoder
 
@@ -10,9 +10,45 @@ def short_escuela(d):
   return {'id': d.id,
         'nombre': d.nombre,
         'lat': d.lat,
-        'lon': d.lon}
+        'lon': d.lon,
+        'sector': d.sector,
+        'ed_comun': d.ed_comun,
+        'ed_especial': d.ed_especial,
+        'ed_jov_adu': d.ed_jov_adu,
+        'ed_arte': d.ed_arte,
+        'ed_hosp_dom': d.ed_hosp_dom,
+        'ed_inter_bil': d.ed_inter_bil,
+        'ed_encierro': d.ed_encierro
+  }
 
 def detail_escuela(d):
+  Encuestas = Encuesta.objects.filter(escuela_id=d.id)
+
+  num_encuestas = len(Encuestas)
+  sum_infraestructura = Decimal(0)
+  sum_calidadeducativa = Decimal(0)
+  sum_cuota = Decimal(0)
+  for row in Encuestas:
+    sum_infraestructura += row.infraestructura
+    sum_calidadeducativa += row.calidadeducativa
+    sum_cuota += row.cuota
+
+  avg_infraestructura = None
+  avg_calidadeducativa = None
+  avg_cuota = None
+
+  if num_encuestas > 0:
+    avg_infraestructura = sum_infraestructura / num_encuestas
+    avg_calidadeducativa = sum_calidadeducativa / num_encuestas
+    avg_cuota = sum_cuota / num_encuestas
+
+  Denuncias = Denuncia.objects.filter(escuela_id=d.id)
+
+  d_arr = []
+
+  for row in Denuncias:
+    d_arr.append(row.texto)
+
   return {
   'id': d.id,
   'jurisdiccion': d.jurisdiccion,
@@ -60,7 +96,11 @@ def detail_escuela(d):
   'servicios_comp': d.servicios_comp,
   'tipo_ubicacion': d.tipo_ubicacion,
   'lat': d.lat,
-  'lon': d.lon
+  'lon': d.lon,
+  'avg_infraestructura': avg_infraestructura,
+  'avg_calidadeducativa': avg_calidadeducativa,
+  'avg_cuota': avg_cuota,
+  'denuncias': d_arr
   }
 
 def all_escuelas(request):
@@ -72,6 +112,38 @@ def escuela(request, id):
   try:
     escuela = Escuela.objects.get(pk=id)
   except Escuela.DoesNotExist:
-    return Response(status=status.HTTP_404_NOT_FOUND)
+    return HttpResponseNotFound()
   
+  return HttpResponse(json.dumps(detail_escuela(escuela), cls=DecimalEncoder), content_type="application/json")
+
+def puntuar(request, id):
+  try:
+    escuela = Escuela.objects.get(pk=id)
+  except Escuela.DoesNotExist:
+    return HttpResponseNotFound()
+  
+  obj = json.loads(request.body)
+
+  enc = Encuesta()
+  enc.escuela = escuela
+  enc.infraestructura = obj['puntuar_infraestructura']
+  enc.calidadeducativa = obj['puntuar_calidadeducativa']
+  enc.cuota = obj['puntuar_cuota']
+  enc.save()
+
+  return HttpResponse(json.dumps(detail_escuela(escuela), cls=DecimalEncoder), content_type="application/json")
+
+def denunciar(request, id):
+  try:
+    escuela = Escuela.objects.get(pk=id)
+  except Escuela.DoesNotExist:
+    return HttpResponseNotFound()
+  
+  obj = json.loads(request.body)
+
+  den = Denuncia()
+  den.escuela = escuela
+  den.texto = obj['denuncia']
+  den.save()
+
   return HttpResponse(json.dumps(detail_escuela(escuela), cls=DecimalEncoder), content_type="application/json")
