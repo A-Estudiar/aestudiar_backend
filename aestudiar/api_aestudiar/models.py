@@ -1,7 +1,7 @@
 from django.db import models
 
 class Escuela(models.Model):
-  jurisdiccion = models.CharField(max_length=200, null=True)
+  jurisdiccion = models.CharField(max_length=500, null=True)
   cue_anexo = models.IntegerField(null=True)
   nombre = models.CharField(max_length=400, null=True)
   sector = models.CharField(max_length=50, null=True)
@@ -11,7 +11,7 @@ class Escuela(models.Model):
   telefono = models.CharField(max_length=30, null=True)
   localidad = models.CharField(max_length=150, null=True)
   departamento = models.CharField(max_length=150, null=True)
-  email = models.CharField(max_length=200, null=True)
+  email = models.CharField(max_length=500, null=True)
   ed_comun = models.BooleanField(default=False)
   ed_especial = models.BooleanField(default=False)
   ed_jov_adu = models.BooleanField(default=False)

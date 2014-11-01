@@ -64,7 +64,7 @@ def detail_escuela(d):
   }
 
 def all_escuelas(request):
-  all_escuelas = map(short_escuela, Escuela.objects.all()[:5000])
+  all_escuelas = map(short_escuela, Escuela.objects.filter(jurisdiccion="Ciudad de Buenos Aires"))
 
   return HttpResponse(json.dumps(all_escuelas, cls=DecimalEncoder), content_type="application/json")
 
