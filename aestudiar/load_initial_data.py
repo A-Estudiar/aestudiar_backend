@@ -1,5 +1,6 @@
 from api_aestudiar.models import Escuela
 from decimal import Decimal
+from django.contrib.gis.geos import (Point, fromstr, fromfile)
 
 def transf_int(s):
   try:
@@ -62,11 +63,11 @@ with open('../establecimientos.csv') as f:
     e.ed_hosp_secundaria = transf_bool(row[41])
     e.servicios_comp = transf_bool(row[42])
     e.tipo_ubicacion = transf_int(row[43])
-    e.lat = None
-    e.lon = None
+    e.pos = None
     try:
-      e.lat = Decimal(row[44])
-      e.lon = Decimal(row[45])
+      pstr = "POINT(%s %s)" % (row[45], row[44])
+      e.pos = fromstr(pstr)
+      if e.pos != None:
+        e.save()
     except Exception:
       pass
-    e.save()

@@ -36,6 +36,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.gis',
     'api_aestudiar',
     'corsheaders'
 )
@@ -62,7 +63,7 @@ WSGI_APPLICATION = 'aestudiar.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'ENGINE': 'django.contrib.gis.db.backends.postgis',
         'NAME': 'aestudiar',
         'HOST': '127.0.0.1',
         'USER': 'postgres',

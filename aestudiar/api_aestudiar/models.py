@@ -1,4 +1,4 @@
-from django.db import models
+from django.contrib.gis.db import models
 
 class Escuela(models.Model):
   jurisdiccion = models.CharField(max_length=500, null=True)
@@ -45,9 +45,9 @@ class Escuela(models.Model):
   ed_hosp_secundaria = models.BooleanField(default=False)
   servicios_comp = models.BooleanField(default=False)
   tipo_ubicacion = models.IntegerField(null=True)
-  lat = models.DecimalField(max_digits=12, decimal_places=9, null=True)
-  lon = models.DecimalField(max_digits=12, decimal_places=9, null=True)
-
+  pos = models.PointField()
+  
+  objects = models.GeoManager()
 
 class Encuesta(models.Model):
   escuela = models.ForeignKey('Escuela')
