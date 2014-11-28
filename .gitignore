@@ -5,4 +5,4 @@ local/
 *.pyc
 casperjs/
 local_settings.py
-buffer_apikeys.py
+captcha_secret.py

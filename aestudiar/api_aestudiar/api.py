@@ -1,5 +1,6 @@
 from django.http import HttpResponse, HttpResponseNotFound
-import json
+import json, requests
+
 from decimal import Decimal
 
 from django.contrib.gis.geos import fromstr
@@ -7,7 +8,9 @@ from django.contrib.gis.measure import D
 
 from api_aestudiar.models import Escuela, Encuesta, Denuncia
 
-from api_aestudiar.utils import DecimalEncoder
+from api_aestudiar.utils import DecimalEncoder, get_client_ip
+
+import captcha_secret as cs
 
 def short_escuela(d):
   return {'id': d.id,
@@ -123,6 +126,18 @@ def escuela(request, id):
 
   return HttpResponse(json.dumps(detail_escuela(escuela), cls=DecimalEncoder), content_type="application/json")
 
+def verificarCaptcha(request, captcha):
+    payload = {'privatekey': cs.SECRET_KEY, 'response': captcha['response'], 'challenge': captcha['challenge'], 'remoteip': get_client_ip(request)}
+    r = requests.post("https://www.google.com/recaptcha/api/verify", data=payload)
+
+    if r.status_code == 200:
+        res = r.text.split('\n')[0].strip()
+        if res == 'false':
+            return False
+    else:
+        return False
+    return True
+
 def puntuar(request, id):
   try:
 	escuela = Escuela.objects.get(pk=id)
@@ -131,14 +146,18 @@ def puntuar(request, id):
 
   obj = json.loads(request.body)
 
-  enc = Encuesta()
-  enc.escuela = escuela
-  enc.infraestructura = obj['puntuar_infraestructura']
-  enc.calidadeducativa = obj['puntuar_calidadeducativa']
-  enc.cuota = obj['puntuar_cuota']
-  enc.save()
+  captcha = obj['captcha']
+  if verificarCaptcha(request, captcha):
+      enc = Encuesta()
+      enc.escuela = escuela
+      enc.infraestructura = obj['puntuar_infraestructura']
+      enc.calidadeducativa = obj['puntuar_calidadeducativa']
+      enc.cuota = obj['puntuar_cuota']
+      enc.save()
 
-  return HttpResponse(json.dumps(detail_escuela(escuela), cls=DecimalEncoder), content_type="application/json")
+      return HttpResponse(json.dumps(detail_escuela(escuela), cls=DecimalEncoder), content_type="application/json")
+  else:
+      return HttpResponse(status=400)
 
 def denunciar(request, id):
   try:
@@ -147,10 +166,13 @@ def denunciar(request, id):
 	return HttpResponseNotFound()
 
   obj = json.loads(request.body)
+  captcha = obj['captcha']
+  if verificarCaptcha(request, captcha):
+      den = Denuncia()
+      den.escuela = escuela
+      den.texto = obj['denuncia']
+      den.save()
 
-  den = Denuncia()
-  den.escuela = escuela
-  den.texto = obj['denuncia']
-  den.save()
-
-  return HttpResponse(json.dumps(detail_escuela(escuela), cls=DecimalEncoder), content_type="application/json")
+      return HttpResponse(json.dumps(detail_escuela(escuela), cls=DecimalEncoder), content_type="application/json")
+  else:
+      return HttpResponse(status=400)
