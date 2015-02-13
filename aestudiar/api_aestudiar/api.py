@@ -30,14 +30,6 @@ def short_escuela(d):
 def detail_escuela(d):
   Encuestas = Encuesta.objects.filter(escuela_id=d.id)
 
-  num_encuestas = len(Encuestas)
-  sum_infraestructura = Decimal(0)
-  sum_calidadeducativa = Decimal(0)
-  sum_cuota = Decimal(0)
-  for row in Encuestas:
-	sum_infraestructura += row.infraestructura
-	sum_calidadeducativa += row.calidadeducativa
-	sum_cuota += row.cuota
 
   infraestructura = filter(lambda x: x != None, map(lambda x: x.infraestructura, Encuestas))
   num_infraestructura = max([len(infraestructura), 1])
