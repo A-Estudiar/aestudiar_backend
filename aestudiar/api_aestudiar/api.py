@@ -39,14 +39,21 @@ def detail_escuela(d):
 	sum_calidadeducativa += row.calidadeducativa
 	sum_cuota += row.cuota
 
-  avg_infraestructura = None
-  avg_calidadeducativa = None
-  avg_cuota = None
+  infraestructura = filter(lambda x: x != None, map(lambda x: x.infraestructura, Encuestas))
+  num_infraestructura = max([len(infraestructura), 1])
+  sum_infraestructura = sum(infraestructura)
 
-  if num_encuestas > 0:
-	avg_infraestructura = sum_infraestructura / num_encuestas
-	avg_calidadeducativa = sum_calidadeducativa / num_encuestas
-	avg_cuota = sum_cuota / num_encuestas
+  calidadeducativa = filter(lambda x: x != None, map(lambda x: x.calidadeducativa, Encuestas))
+  num_calidadeducativa = max([len(calidadeducativa), 1])
+  sum_calidadeducativa = sum(calidadeducativa)
+
+  cuotas = filter(lambda x: x != None, map(lambda x: x.cuota, Encuestas))
+  num_cuotas = max([len(cuotas), 1])
+  sum_cuota = sum(cuotas)
+
+  avg_infraestructura = sum_infraestructura / num_infraestructura
+  avg_calidadeducativa = sum_calidadeducativa / num_calidadeducativa
+  avg_cuota = sum_cuota / num_cuotas
 
   Denuncias = Denuncia.objects.filter(escuela_id=d.id)
 
